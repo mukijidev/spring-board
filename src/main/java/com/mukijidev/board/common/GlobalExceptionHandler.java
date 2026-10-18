@@ -2,6 +2,7 @@ package com.mukijidev.board.common;
 
 
 import com.mukijidev.board.post.PostNotFoundException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,4 +43,11 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         return new ErrorResponse("Invalid value for " + e.getName());
     }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlePropertyReference(PropertyReferenceException e) {
+        return new ErrorResponse("Unknown property " + e.getPropertyName());
+    }
+
 }

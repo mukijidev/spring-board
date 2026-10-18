@@ -2,8 +2,14 @@ package com.mukijidev.board.post;
 
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import com.mukijidev.board.common.PageResponse;
 
 import java.net.URI;
 import java.util.List;
@@ -18,10 +24,12 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping
-    public List<PostResponse> list() {
-        return postService.list();
-    }
+   @GetMapping
+   public PageResponse<PostResponse> list(
+           @RequestParam(required = false) String keyword,
+           @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
+        return PageResponse.from(postService.list(keyword, pageable));
+   }
 
     @GetMapping("/{id}")
     public PostResponse get(@PathVariable Long id) {
@@ -31,11 +39,11 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponse> create(@Valid @RequestBody PostCreateRequest request) {
         PostResponse created = postService.create(request);
-        return ResponseEntity.created(URI.create("/posts" + created.id())).body(created);
+        return ResponseEntity.created(URI.create("/posts/" + created.id())).body(created);
     }
 
     @PutMapping("/{id}")
-    public PostResponse update(@Valid @PathVariable Long id, @RequestBody PostUpdateRequest request) {
+    public PostResponse update( @PathVariable Long id,@Valid @RequestBody PostUpdateRequest request) {
         return postService.update(id, request);
     }
 

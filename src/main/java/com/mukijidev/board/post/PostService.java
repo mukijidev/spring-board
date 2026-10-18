@@ -3,6 +3,8 @@ package com.mukijidev.board.post;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,10 +27,16 @@ public class PostService {
     }
 
 
-    public List<PostResponse> list() {
-        return postRepository.findAll().stream()
-                .map(PostResponse::from)
-                .toList();
+    public Page<PostResponse> list(String keyword, Pageable pageable) {
+        Page<Post> posts;
+
+        if(keyword == null || keyword.isBlank()) {
+            posts = postRepository.findAll(pageable);
+        } else {
+            posts = postRepository.findByTitleContaining(keyword, pageable);
+        }
+
+        return posts.map(PostResponse::from);
     }
 
     @Transactional
