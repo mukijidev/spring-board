@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import Pagination from './Pagination'
 import SearchBar from './SearchBar'
 import PostItem from './PostItem'
+import PostForm from './PostForm'
 import './App.css'
+
 
 
 
@@ -15,6 +17,8 @@ function App() {
   const [totalPages, setTotalPages] = useState(0)
   const [keyword, setKeyword] = useState('')
   const [loading, setLoading] = useState(true)
+  const [reloadCount, setReloadCount] = useState(0)
+
 
   useEffect(() => {
     async function loadPosts() {
@@ -29,16 +33,22 @@ function App() {
       setLoading(false)
     }
     loadPosts()
-  }, [page, keyword])
+  }, [page, keyword, reloadCount])
 
   function handleSearch(newKeyword) {
     setKeyword(newKeyword)
     setPage(0)
   }
 
+  function handleCreated() {
+    setPage(0)
+    setReloadCount((count) => count +1)
+  }
+  
   return (
     <main>
       <h1>Spring Board</h1>
+      <PostForm onCreated={handleCreated}/>
       <SearchBar onSearch={handleSearch}/>
       {loading && <p>Loading...</p>}
       {!loading && posts.length === 0 && <p>No posts found.</p>}
