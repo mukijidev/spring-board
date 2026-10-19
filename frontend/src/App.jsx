@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Pagination from './Pagination'
 import SearchBar from './SearchBar'
 import PostItem from './PostItem'
-import PostForm from './PostForm'
+import PostEditor from './PostEditor'
 import { createPost } from './api'
 import './App.css'
 
@@ -64,7 +64,7 @@ function App() {
   return (
     <main>
       <h1>Spring Board</h1>
-      <PostForm onSubmit={handleCreate}/>
+      <PostEditor onSubmit={handleCreate}/>
       <SearchBar onSearch={handleSearch}/>
       {loading && <p>Loading...</p>}
       {!loading && posts.length === 0 && page === 0 &&<p>No posts found.</p>}

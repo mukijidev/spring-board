@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import { deletePost, updatePost } from './api'
-import PostForm from './PostForm'
+import PostEditor from './PostEditor'
 
 function PostItem({post, onDeleted, onUpdated}) {
     const [open, setOpen] = useState(false)
@@ -38,7 +38,7 @@ function PostItem({post, onDeleted, onUpdated}) {
                 <div className="post-detail">
                     {editing ? (
                     <>
-                        <PostForm
+                        <PostEditor
                         initialTitle={post.title}
                         initialContent={post.content}
                         submitLabel="Save"

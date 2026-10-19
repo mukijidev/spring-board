@@ -1,6 +1,6 @@
 import {useState} from 'react'
 
-function PostForm({initialTitle ='', initialContent = '', submitLabel ='Post', onSubmit}) {
+function PostEditor({initialTitle ='', initialContent = '', submitLabel ='Post', onSubmit}) {
     const [title, setTitle] = useState(initialTitle)
     const [content, setContent] = useState(initialContent)
     const [error, setError] = useState('')
@@ -25,7 +25,7 @@ function PostForm({initialTitle ='', initialContent = '', submitLabel ='Post', o
 
 
     return (
-        <form className="post-form" onSubmit={handleSubmit}>
+        <form className="post-editor" onSubmit={handleSubmit}>
             <input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
@@ -46,4 +46,4 @@ function PostForm({initialTitle ='', initialContent = '', submitLabel ='Post', o
     )
 }
 
-export default PostForm
+export default PostEditor
