@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import Pagination from './Pagination'
 import SearchBar from './SearchBar'
+import PostItem from './PostItem'
 import './App.css'
+
+
 
 
 const PAGE_SIZE = 3
@@ -11,7 +14,7 @@ function App() {
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [keyword, setKeyword] = useState('')
-
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadPosts() {
@@ -23,6 +26,7 @@ function App() {
       const data = await response.json()
       setPosts(data.content)
       setTotalPages(data.totalPages)
+      setLoading(false)
     }
     loadPosts()
   }, [page, keyword])
@@ -36,10 +40,11 @@ function App() {
     <main>
       <h1>Spring Board</h1>
       <SearchBar onSearch={handleSearch}/>
-      {posts.length === 0 && <p>No posts found.</p>}
-      <ul>
+      {loading && <p>Loading...</p>}
+      {!loading && posts.length === 0 && <p>No posts found.</p>}
+      <ul className="post-list">
         {posts.map((post) => (
-          <li key={post.id}>{post.title}</li>
+          <PostItem key={post.id} post={post}/>
         ))}
       </ul>
       <Pagination page ={page} totalPages={totalPages} onChange={setPage} />

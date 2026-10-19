@@ -1,3 +1,31 @@
 .pagination button.current {
   font-weight: bold;
 }
+
+.post-list {
+  padding: 0;
+}
+
+.post-item {
+  list-style: none;
+  border-bottom: 1px solid #ddd;
+}
+
+.post-title {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.post-date {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.post-content {
+  white-space: pre-wrap;
+}
