@@ -1,8 +1,8 @@
 import {useState} from 'react'
 
-function PostForm({onCreated}) {
-    const [title, setTitle] = useState('')
-    const [content, setContent] = useState('')
+function PostForm({initialTitle ='', initialContent = '', submitLabel ='Post', onSubmit}) {
+    const [title, setTitle] = useState(initialTitle)
+    const [content, setContent] = useState(initialContent)
     const [error, setError] = useState('')
     const [submitting, setSubmitting] = useState(false)
 
@@ -12,22 +12,12 @@ function PostForm({onCreated}) {
         setError('')
 
         try {
-            const response = await fetch('/api/posts', {
-                method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({title, content}),
-            })
-
-            if(response.ok) {
-                setTitle('')
-                setContent('')
-                onCreated()
-            } else {
-                const data = await response.json()
-                setError(data.message)
-            }
-        } catch {
-            setError('could not reach the server')
+            await onSubmit(title, content)
+            setTitle('')
+            setContent('')
+        } catch (e) {
+            console.error(e)
+            setError(e.message)
         } finally{
             setSubmitting(false)
         }
@@ -50,7 +40,7 @@ function PostForm({onCreated}) {
             {error && <p className="error">{error}</p>}
 
             <button type="submit" disabled={submitting}>
-                Post
+                {submitLabel}
             </button>
         </form>
     )

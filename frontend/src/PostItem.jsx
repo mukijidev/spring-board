@@ -1,42 +1,60 @@
 import {useState} from 'react'
+import { deletePost, updatePost } from './api'
+import PostForm from './PostForm'
 
-function PostItem({post, onDeleted}) {
+function PostItem({post, onDeleted, onUpdated}) {
     const [open, setOpen] = useState(false)
+    const [editing, setEditing] = useState(false)
     const [error, setError] = useState('')
 
     async function handleDelete() {
-        if(!window.confirm('Delete this post?')){
+        if(!window.confirm('Delete this post?')) {
             return
         }
         setError('')
 
         try {
-            const response = await fetch(`/api/posts/${post.id}`, {method: 'DELETE'})
-            if(response.ok) {
-                onDeleted()
-            } else {
-                const data = await response.json()
-                setError(data.message)
-            }
-        } catch (e) {
+            await deletePost(post.id)
+            onDeleted()
+        } catch(e) {
             console.error(e)
-            setError('Could not reach the server')
+            setError(e.message)
         }
-
     }
 
+    async function handleUpdate(title, content) {
+        await updatePost(post.id, title, content)
+        setEditing(false)
+        onUpdated()
+    }
 
     return (
         <li className="post-item">
             <button className="post-title" onClick={() => setOpen(!open)}>
-                {open ? '-' : '+'} {post.title}
+            {open ? '-' : '+'} {post.title}
             </button>
+
             {open && (
                 <div className="post-detail">
-                    <p className="post-date">{new Date(post.createdAt).toLocaleString()}</p>
-                    <p className="post-content">{post.content}</p>
-                    {error && <p className="error">{error}</p>}
-                    <button onClick={handleDelete}>Delete</button>
+                    {editing ? (
+                    <>
+                        <PostForm
+                        initialTitle={post.title}
+                        initialContent={post.content}
+                        submitLabel="Save"
+                        onSubmit={handleUpdate}
+                        />
+                        <button onClick={()=>setEditing(false)}>Cancel</button>
+                    </>    
+                    ) : (
+                        <>
+                            <p className ="post-date">{new Date(post.createdAt).toLocaleString()}</p>
+                            <p className="post-content">{post.content}</p>                         
+                            {error && <p className="error">{error}</p>}
+                            <button onClick={() => setEditing(true)}>Edit</button>
+                            <button onClick={handleDelete}>Delete</button>
+                        </>
+                    )}
                 </div>
             )}
         </li>

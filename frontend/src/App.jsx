@@ -3,6 +3,7 @@ import Pagination from './Pagination'
 import SearchBar from './SearchBar'
 import PostItem from './PostItem'
 import PostForm from './PostForm'
+import { createPost } from './api'
 import './App.css'
 
 
@@ -40,9 +41,11 @@ function App() {
     setPage(0)
   }
 
-  function handleCreated() {
+
+  async function handleCreate(title, content) {
+    await createPost(title, content)
     setPage(0)
-    setReloadCount((count) => count +1)
+    setReloadCount((count) => count + 1)
   }
 
  
@@ -54,10 +57,14 @@ function App() {
     }
   }
 
+  function handleUpdate() {
+    setReloadCount((count) => count+1)
+  }
+
   return (
     <main>
       <h1>Spring Board</h1>
-      <PostForm onCreated={handleCreated}/>
+      <PostForm onSubmit={handleCreate}/>
       <SearchBar onSearch={handleSearch}/>
       {loading && <p>Loading...</p>}
       {!loading && posts.length === 0 && page === 0 &&<p>No posts found.</p>}
@@ -69,7 +76,7 @@ function App() {
       )}      
       <ul className="post-list">
         {posts.map((post) => (
-          <PostItem key={post.id} post={post} onDeleted={handleDeleted}/>
+          <PostItem key={post.id} post={post} onDeleted={handleDeleted} onUpdated={handleUpdate}/>
         ))}
       </ul>
       <Pagination page ={page} totalPages={totalPages} onChange={setPage} />
