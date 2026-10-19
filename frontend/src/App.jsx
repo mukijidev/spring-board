@@ -44,17 +44,32 @@ function App() {
     setPage(0)
     setReloadCount((count) => count +1)
   }
-  
+
+ 
+  function handleDeleted() {
+    if(posts.length ===1 && page > 0){
+      setPage(page-1)
+    } else {
+      setReloadCount((count) => count + 1)
+    }
+  }
+
   return (
     <main>
       <h1>Spring Board</h1>
       <PostForm onCreated={handleCreated}/>
       <SearchBar onSearch={handleSearch}/>
       {loading && <p>Loading...</p>}
-      {!loading && posts.length === 0 && <p>No posts found.</p>}
+      {!loading && posts.length === 0 && page === 0 &&<p>No posts found.</p>}
+      {!loading && posts.length === 0 && page > 0 && (
+        <p>
+          This page no longer exists.{' '}
+          <button onClick={() => setPage(0)}>Go to first Page</button>
+        </p>
+      )}      
       <ul className="post-list">
         {posts.map((post) => (
-          <PostItem key={post.id} post={post}/>
+          <PostItem key={post.id} post={post} onDeleted={handleDeleted}/>
         ))}
       </ul>
       <Pagination page ={page} totalPages={totalPages} onChange={setPage} />
