@@ -27,4 +27,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("select new com.mukijidev.board.comment.CommentCountPerPost(c.post.id, count(c))"
             + "from Comment c where c.post.id in :postIds group by c.post.id")
     List<CommentCountPerPost> countByPostIds(@Param("postIds") List<Long> postIds);
+
+
+    @Query(value= "select c from Comment c join fetch c.post",
+                countQuery = "select count(c) from Comment c")
+    Page<Comment> findRecent(Pageable pageable);
 }

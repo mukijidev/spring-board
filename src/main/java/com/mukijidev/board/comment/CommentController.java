@@ -40,4 +40,13 @@ public class CommentController {
         commentService.delete(postId, id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/comments/recent")
+    public PageResponse<RecentCommentResponse> recent(
+            @PageableDefault(size =5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+
+            return PageResponse.from(commentService.recent(pageable));
+        }
+
 }

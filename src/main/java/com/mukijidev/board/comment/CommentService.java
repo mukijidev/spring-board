@@ -44,5 +44,7 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-
+    public Page<RecentCommentResponse> recent(Pageable pageable) {
+        return commentRepository.findRecent(pageable).map(RecentCommentResponse::from);
+    }
 }
