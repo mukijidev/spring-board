@@ -1,6 +1,9 @@
 package com.mukijidev.board.post;
 
 import java.util.List;
+
+import com.mukijidev.board.comment.Comment;
+import com.mukijidev.board.comment.CommentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -11,9 +14,11 @@ import org.springframework.data.domain.Pageable;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
@@ -48,7 +53,9 @@ public class PostService {
 
     @Transactional
     public void delete(Long id) {
-        postRepository.delete(findPost(id));
+        Post post = findPost(id);
+        commentRepository.deleteByPostId(id);
+        postRepository.delete(post);
     }
 
     private Post findPost(Long id) {

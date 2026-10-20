@@ -1,6 +1,7 @@
 package com.mukijidev.board.common;
 
 
+import com.mukijidev.board.comment.CommentNotFoundException;
 import com.mukijidev.board.post.PostNotFoundException;
 import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PostNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(PostNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFound(CommentNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 
