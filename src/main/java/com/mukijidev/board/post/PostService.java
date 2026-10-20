@@ -1,8 +1,11 @@
 package com.mukijidev.board.post;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.mukijidev.board.comment.Comment;
+import com.mukijidev.board.comment.CommentCountPerPost;
 import com.mukijidev.board.comment.CommentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +27,13 @@ public class PostService {
     @Transactional
     public PostResponse create(PostCreateRequest request) {
         Post post = postRepository.save(new Post(request.title(), request.content()));
-        return PostResponse.from(post);
+        return PostResponse.from(post, 0);
     }
 
     public PostResponse get(Long id) {
-        return PostResponse.from(findPost(id));
+        Post post = findPost(id);
+        long commentCount = commentRepository.countByPostId(id);
+        return PostResponse.from(post, commentCount);
     }
 
 
@@ -41,14 +46,28 @@ public class PostService {
             posts = postRepository.findByTitleContaining(keyword, pageable);
         }
 
-        return posts.map(PostResponse::from);
+        //return posts.map(post ->PostResponse.from(post));
+        Map<Long, Long> commentCounts = countComments(posts.getContent());
+        return posts.map(post->PostResponse.from(post, commentCounts.getOrDefault(post.getId(), 0L)));
+    }
+
+    private Map<Long, Long> countComments(List<Post> posts) {
+        if(posts.isEmpty()) {
+            return Map.of();
+        }
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+        return commentRepository.countByPostIds(postIds).stream()
+                .collect(Collectors.toMap(CommentCountPerPost::postId, CommentCountPerPost::commentId));
+
     }
 
     @Transactional
     public PostResponse update(Long id, PostUpdateRequest request) {
         Post post = findPost(id);
+        long commentCount = commentRepository.countByPostId(id);
         post.update(request.title(), request.content());
-        return PostResponse.from(post);
+        return PostResponse.from(post, commentCount);
     }
 
     @Transactional

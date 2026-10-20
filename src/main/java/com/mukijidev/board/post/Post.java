@@ -22,6 +22,7 @@ public class Post {
 
     private LocalDateTime updatedAt;
 
+
     protected Post() {
     }
 
