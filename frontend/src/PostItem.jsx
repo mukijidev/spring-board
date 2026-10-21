@@ -1,8 +1,9 @@
 import {useState} from 'react'
 import { deletePost, updatePost } from './api'
 import PostEditor from './PostEditor'
+import CommentSection from './CommentSection'
 
-function PostItem({post, onDeleted, onUpdated}) {
+function PostItem({post, onDeleted, onUpdated, onCommentsChanged}) {
     const [open, setOpen] = useState(false)
     const [editing, setEditing] = useState(false)
     const [error, setError] = useState('')
@@ -32,6 +33,7 @@ function PostItem({post, onDeleted, onUpdated}) {
         <li className="post-item">
             <button className="post-title" onClick={() => setOpen(!open)}>
             {open ? '-' : '+'} {post.title}
+            {post.commentCount >0 && `[${post.commentCount}]`}
             </button>
 
             {open && (
@@ -53,6 +55,7 @@ function PostItem({post, onDeleted, onUpdated}) {
                             {error && <p className="error">{error}</p>}
                             <button onClick={() => setEditing(true)}>Edit</button>
                             <button onClick={handleDelete}>Delete</button>
+                            <CommentSection postId={post.id} onChanged={onCommentsChanged} />
                         </>
                     )}
                 </div>

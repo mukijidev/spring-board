@@ -57,8 +57,12 @@ function App() {
     }
   }
 
-  function handleUpdate() {
+  function handleUpdated() {
     setReloadCount((count) => count+1)
+  }
+
+  function handleCommentsChanged() {
+    setReloadCount((count) => count +1)
   }
 
   return (
@@ -75,8 +79,8 @@ function App() {
         </p>
       )}      
       <ul className="post-list">
-        {posts.map((post) => (
-          <PostItem key={post.id} post={post} onDeleted={handleDeleted} onUpdated={handleUpdate}/>
+        {posts.map((post) => (       
+          <PostItem key={post.id} post={post} onDeleted={handleDeleted} onUpdated={handleUpdated} onCommentsChanged={handleCommentsChanged}/>
         ))}
       </ul>
       <Pagination page ={page} totalPages={totalPages} onChange={setPage} />

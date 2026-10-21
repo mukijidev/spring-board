@@ -27,4 +27,19 @@ export function updatePost(id, title, content) {
         })
 }
 
+export async function fetchComments(postId) {
+    const response = await request(`/posts/${postId}/comments`)
+    return response.json()
+}
 
+export function createComment(postId, content) {
+    return request(`/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({content}),
+    })
+}
+
+export function deleteComment(postId, commentId) {
+    return request(`/posts/${postId}/comments/${commentId}`, {method : 'DELETE'})
+}

@@ -42,3 +42,37 @@
   color: #c00;
   margin: 0;
 }
+
+.comments {
+  margin-top: 12px;
+  padding-left: 12px;
+  border-left: 3px solid #eee;
+}
+
+.comment-list {
+  padding: 0;
+}
+
+.comment-item {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.comment-date,
+.comment-empty {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.comment-form {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-form input {
+  flex: 1;
+  max-width: 360px;
+}
