@@ -1,0 +1,17 @@
+# 로컬 개발용 MySQL. "docker compose up -d"로 띄우고 "docker compose down"으로 끈다.
+services:
+  mysql:
+    image: mysql:8.4                  # MySQL 8.4 (장기 지원 버전)
+    container_name: spring-board-mysql
+    environment:                      # 처음 띄울 때 이 값으로 DB와 계정을 만든다
+      MYSQL_DATABASE: board
+      MYSQL_USER: board
+      MYSQL_PASSWORD: board
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"                   # 내 PC 3307 → 컨테이너 3306
+    volumes:
+      - mysql-data:/var/lib/mysql     # 데이터를 볼륨에 저장 → 컨테이너를 지워도 데이터가 남는다
+
+volumes:
+  mysql-data:
