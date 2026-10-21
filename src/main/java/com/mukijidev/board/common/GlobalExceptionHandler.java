@@ -3,6 +3,7 @@ package com.mukijidev.board.common;
 
 import com.mukijidev.board.comment.CommentNotFoundException;
 import com.mukijidev.board.post.PostNotFoundException;
+import com.mukijidev.board.user.DuplicateUsernameException;
 import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -55,6 +56,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlePropertyReference(PropertyReferenceException e) {
         return new ErrorResponse("Unknown property " + e.getPropertyName());
+    }
+
+    @ExceptionHandler(DuplicateUsernameException.class)
+    @ResponseStatus(HttpStatus.CONFLICT) // 409: 요청은 맞지만 지금 상태(이미 있는 이름)와 충돌
+    public ErrorResponse handleDuplicateUsername(DuplicateUsernameException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
 }
