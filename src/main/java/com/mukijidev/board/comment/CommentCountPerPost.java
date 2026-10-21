@@ -2,5 +2,5 @@ package com.mukijidev.board.comment;
 
 
 
-public record CommentCountPerPost(Long postId, Long commentId) {
+public record CommentCountPerPost(Long postId, Long count) {
 }

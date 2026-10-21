@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.mukijidev.board.comment.Comment;
 import com.mukijidev.board.comment.CommentCountPerPost;
 import com.mukijidev.board.comment.CommentRepository;
 import org.springframework.stereotype.Service;
@@ -58,7 +57,7 @@ public class PostService {
 
         List<Long> postIds = posts.stream().map(Post::getId).toList();
         return commentRepository.countByPostIds(postIds).stream()
-                .collect(Collectors.toMap(CommentCountPerPost::postId, CommentCountPerPost::commentId));
+                .collect(Collectors.toMap(CommentCountPerPost::postId, CommentCountPerPost::count));
 
     }
 
