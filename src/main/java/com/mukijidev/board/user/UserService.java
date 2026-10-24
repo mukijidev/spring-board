@@ -33,4 +33,10 @@ public class UserService {
         }
     }
 
+    public UserResponse findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(UserResponse::from)
+                .orElseThrow(()-> new IllegalStateException("Logged-in user not found: "+username));
+    }
+
 }
