@@ -20,9 +20,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.spa()) // spa용 csrf: 토큰을 쿠키(XSRF-TOKEN)로 주고, 헤더(X-XSRF-TOKEN)으로 받음
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/posts/**", "/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**", "/comments/**", "/auth/csrf").permitAll()
                         .requestMatchers("/auth/signup", "/error").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form

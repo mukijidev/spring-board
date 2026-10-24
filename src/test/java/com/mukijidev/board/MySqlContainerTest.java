@@ -8,6 +8,8 @@ import com.mukijidev.board.comment.CommentService;
 import com.mukijidev.board.post.PostCreateRequest;
 import com.mukijidev.board.post.PostResponse;
 import com.mukijidev.board.post.PostService;
+import com.mukijidev.board.user.User;
+import com.mukijidev.board.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,7 @@ import org.testcontainers.mysql.MySQLContainer;
 
 @SpringBootTest
 @Testcontainers // @Container가 붙은 컨테이너를 띄우고 끝나면 지움
-class MySqlIntegrationTest {
+class MySqlContainerTest {
 
     // @ServiceConnection: Spring의 db url, account를 이 컨테이너 것으로
     @Container
@@ -34,11 +36,15 @@ class MySqlIntegrationTest {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     void postListShowsCommentCountOnMySql() {
-        PostResponse post = postService.create(new PostCreateRequest("Hello", "First post"));
-        commentService.create(post.id(), new CommentCreateRequest("Nice"));
-        commentService.create(post.id(), new CommentCreateRequest("Thanks"));
+        Long authorId = userRepository.save(new User("alice", "encoded")).getId();
+        PostResponse post = postService.create(new PostCreateRequest("Hello", "First post"), authorId);
+        commentService.create(post.id(), new CommentCreateRequest("Nice"), authorId);
+        commentService.create(post.id(), new CommentCreateRequest("Thanks"), authorId);
 
         Page<PostResponse> posts = postService.list(null, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
 

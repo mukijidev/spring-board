@@ -2,6 +2,7 @@ package com.mukijidev.board.comment;
 
 
 import com.mukijidev.board.post.Post;
+import com.mukijidev.board.user.User;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +35,14 @@ class CommentRepositoryTest {
     @Test
     void countsCommentsPerPost() {
         //list [post 1, post 2] ->[ comment count 1, comment count 2]
+        User author = em.persist(new User("alice", "encoded"));
 
-        Post post1 = em.persist(new Post("Post 1", "Content"));
-        Post post2 = em.persist(new Post("Post 2", "Content"));
-        Post post3 = em.persist(new Post("Post 3", "Content"));
-
-        em.persist(new Comment(post1, "a"));
-        em.persist(new Comment(post1, "b"));
-        em.persist(new Comment(post3, "c"));
+        Post post1 = em.persist(new Post("Post 1", "Content", author));
+        Post post2 = em.persist(new Post("Post 2", "Content", author));
+        Post post3 = em.persist(new Post("Post 3", "Content", author));
+        em.persist(new Comment(post1, "a", author));
+        em.persist(new Comment(post1, "b", author));
+        em.persist(new Comment(post3, "c", author));
 
         List<CommentCountPerPost> counts =
                 commentRepository.countByPostIds(List.of(post1.getId(), post2.getId()));
@@ -53,8 +54,10 @@ class CommentRepositoryTest {
     @Test
     void findRecentFetchesPost() {
         //fetch join
-        Post post = em.persist(new Post("Title", "Content"));
-        em.persist(new Comment(post, "Hello"));
+        User author = em.persist(new User("alice", "encoded"));
+
+        Post post = em.persist(new Post("Title", "Content", author));
+        em.persist(new Comment(post, "Hello", author));
         em.flush();
         em.clear();
 
@@ -66,8 +69,10 @@ class CommentRepositoryTest {
     @Test
     void findAllKeepsPostLazy() {
         // findAll -> proxy post
-        Post post = em.persist(new Post("Title", "Content"));
-        em.persist(new Comment(post, "Hello"));
+        User author = em.persist(new User("alice", "encoded"));
+
+        Post post = em.persist(new Post("Title", "Content", author));
+        em.persist(new Comment(post, "Hello", author));
         em.flush();
         em.clear();
 
@@ -77,12 +82,13 @@ class CommentRepositoryTest {
 
     @Test
     void deleteByPostIdKeepsOtherPosts() {
-        Post post1 = em.persist(new Post("Post 1", "Content"));
-        Post post2 = em.persist(new Post("Post 2", "Content"));
+        User author = em.persist(new User("alice", "encoded"));
+        Post post1 = em.persist(new Post("Post 1", "Content", author));
+        Post post2 = em.persist(new Post("Post 2", "Content", author));
 
-        em.persist(new Comment(post1, "a"));
-        em.persist(new Comment(post1, "b"));
-        em.persist(new Comment(post2, "c"));
+        em.persist(new Comment(post1, "a", author));
+        em.persist(new Comment(post1, "b", author));
+        em.persist(new Comment(post2, "c", author));
         em.flush();
 
         commentRepository.deleteByPostId(post1.getId());
