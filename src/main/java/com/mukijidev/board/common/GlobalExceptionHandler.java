@@ -64,4 +64,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(NotAuthorException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN) // 403
+    public ErrorResponse handleNotAuthor(NotAuthorException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }

@@ -1,18 +1,17 @@
 package com.mukijidev.board.post;
 
 
+import com.mukijidev.board.common.PageResponse;
+import com.mukijidev.board.user.LoginUser;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import com.mukijidev.board.common.PageResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -37,19 +36,23 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostResponse> create(@Valid @RequestBody PostCreateRequest request) {
-        PostResponse created = postService.create(request);
+    public ResponseEntity<PostResponse> create(@Valid @RequestBody PostCreateRequest request,
+                                               @AuthenticationPrincipal LoginUser loginUser) {
+
+        PostResponse created = postService.create(request, loginUser.getId());
         return ResponseEntity.created(URI.create("/posts/" + created.id())).body(created);
     }
 
     @PutMapping("/{id}")
-    public PostResponse update( @PathVariable Long id,@Valid @RequestBody PostUpdateRequest request) {
-        return postService.update(id, request);
+    public PostResponse update( @PathVariable Long id,@Valid @RequestBody PostUpdateRequest request,
+                                @AuthenticationPrincipal LoginUser loginUser) {
+        return postService.update(id, request, loginUser.getId());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        postService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @AuthenticationPrincipal LoginUser loginUser){
+        postService.delete(id, loginUser.getId());
         return ResponseEntity.noContent().build();
     }
 }

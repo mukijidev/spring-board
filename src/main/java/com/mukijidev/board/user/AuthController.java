@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,10 +22,10 @@ public class AuthController {
     }
 
     //로그인한 사용자의 정보. 로그인 안 했으면 Security가 먼저 막아서 401
-    // @AuthenticationPrincipal: 세션에 저장된 UserDetails를 매갭견수로 넣어준다
+    // @AuthenticationPrincipal: 세션에 저장된 LoginUser를 매개변수로 넣어준다
     @GetMapping("/me")
-    public UserResponse me(@AuthenticationPrincipal UserDetails principal) {
-        return userService.findByUsername(principal.getUsername());
+    public UserResponse me(@AuthenticationPrincipal LoginUser loginUser) {
+        return userService.findById(loginUser.getId());
     }
 
 }

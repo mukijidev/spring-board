@@ -1,11 +1,13 @@
 package com.mukijidev.board.comment;
 
 import com.mukijidev.board.common.PageResponse;
+import com.mukijidev.board.user.LoginUser;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,15 +31,19 @@ public class CommentController {
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentResponse> create(
             @PathVariable Long postId,
-            @Valid @RequestBody CommentCreateRequest request) {
-        System.out.println("[REST} create coomment");
-        CommentResponse created = commentService.create(postId, request);
+            @Valid @RequestBody CommentCreateRequest request,
+            @AuthenticationPrincipal LoginUser loginUser) {
+        //System.out.println("[REST} create coomment");
+
+        CommentResponse created = commentService.create(postId, request, loginUser.getId());
         return ResponseEntity.created(URI.create("/posts/" + postId +"/comments/" + created.id())).body(created);
     }
 
     @DeleteMapping("/posts/{postId}/comments/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long postId, @PathVariable Long id) {
-        commentService.delete(postId, id);
+    public ResponseEntity<Void> delete(@PathVariable Long postId, @PathVariable Long id,
+                                       @AuthenticationPrincipal LoginUser loginUser) {
+
+        commentService.delete(postId, id, loginUser.getId());
         return ResponseEntity.noContent().build();
     }
 

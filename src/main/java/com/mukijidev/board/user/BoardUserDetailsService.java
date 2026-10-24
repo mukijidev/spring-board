@@ -23,15 +23,6 @@ public class BoardUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException(username));
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword()) // bcrypt hash
-                .roles("USER")
-                .build();
+        return new LoginUser(user);
     }
-
-
-
-
-
 }
