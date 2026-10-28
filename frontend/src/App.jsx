@@ -3,7 +3,8 @@ import Pagination from './Pagination'
 import SearchBar from './SearchBar'
 import PostItem from './PostItem'
 import PostEditor from './PostEditor'
-import { createPost } from './api'
+import AuthPanel from './AuthPanel'
+import { createPost, fetchMe, logout } from './api'
 import './App.css'
 
 
@@ -19,7 +20,12 @@ function App() {
   const [keyword, setKeyword] = useState('')
   const [loading, setLoading] = useState(true)
   const [reloadCount, setReloadCount] = useState(0)
+  const [user, setUser] = useState(null)
 
+  // 화면이 처음 뜰 때 이미 로그인 된 세션이있는지 확인(새로고침해도 로그인 유지)
+  useEffect(() => {
+    fetchMe().then(setUser).catch(console.error)
+  }, [])
 
   useEffect(() => {
     async function loadPosts() {
@@ -65,10 +71,21 @@ function App() {
     setReloadCount((count) => count +1)
   }
 
+  async function handleLoggedIn() {
+    setUser(await fetchMe())
+  }
+
+  async function handleLogout() {
+    await logout()
+    setUser(null)
+  }
+
+
   return (
     <main>
       <h1>Spring Board</h1>
-      <PostEditor onSubmit={handleCreate}/>
+      <AuthPanel user={user} onLoggedIn={handleLoggedIn} onLogout={handleLogout} />
+      {user && <PostEditor onSubmit={handleCreate}/>}
       <SearchBar onSearch={handleSearch}/>
       {loading && <p>Loading...</p>}
       {!loading && posts.length === 0 && page === 0 &&<p>No posts found.</p>}
@@ -80,7 +97,13 @@ function App() {
       )}      
       <ul className="post-list">
         {posts.map((post) => (       
-          <PostItem key={post.id} post={post} onDeleted={handleDeleted} onUpdated={handleUpdated} onCommentsChanged={handleCommentsChanged}/>
+          <PostItem 
+            key={post.id} 
+            post={post} 
+            currentUser={user}
+            onDeleted={handleDeleted} 
+            onUpdated={handleUpdated} 
+            onCommentsChanged={handleCommentsChanged}/>
         ))}
       </ul>
       <Pagination page ={page} totalPages={totalPages} onChange={setPage} />

@@ -3,10 +3,12 @@ import { deletePost, updatePost } from './api'
 import PostEditor from './PostEditor'
 import CommentSection from './CommentSection'
 
-function PostItem({post, onDeleted, onUpdated, onCommentsChanged}) {
+function PostItem({post, currentUser, onDeleted, onUpdated, onCommentsChanged}) {
     const [open, setOpen] = useState(false)
     const [editing, setEditing] = useState(false)
     const [error, setError] = useState('')
+
+    const isMine = currentUser?.username === post.authorName
 
     async function handleDelete() {
         if(!window.confirm('Delete this post?')) {
@@ -50,12 +52,18 @@ function PostItem({post, onDeleted, onUpdated, onCommentsChanged}) {
                     </>    
                     ) : (
                         <>
-                            <p className ="post-date">{new Date(post.createdAt).toLocaleString()}</p>
+                            <p className ="post-date"> {post.authorName} · {new Date(post.createdAt).toLocaleString()}</p>
                             <p className="post-content">{post.content}</p>                         
                             {error && <p className="error">{error}</p>}
-                            <button onClick={() => setEditing(true)}>Edit</button>
-                            <button onClick={handleDelete}>Delete</button>
-                            <CommentSection postId={post.id} onChanged={onCommentsChanged} />
+                           {isMine && (
+                            <>
+                                <button onClick={() => setEditing(true)}>Edit</button>
+                                <button onClick={handleDelete}>Delete</button>
+                            </>
+                           )}
+                            <CommentSection postId={post.id} 
+                            currentUser={currentUser}
+                            onChanged={onCommentsChanged} />
                         </>
                     )}
                 </div>

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import {createComment, deleteComment, fetchComments} from './api'
 
-function CommentSection({postId, onChanged}) {
+function CommentSection({postId, currentUser, onChanged}) {
     const [comments, setComments] = useState([])
     const [content, setContent] = useState('')
     const [error, setError] = useState('')
@@ -65,22 +65,31 @@ function CommentSection({postId, onChanged}) {
             <ul className="comment-list">
                 {comments.map((comment) => (
                     <li key={comment.id} className="comment-item">
+                        <span className="comment-author">{comment.authorName}</span>
                         <span>{comment.content}</span>
                         <span className="comment-date">{new Date(comment.createdAt).toLocaleString()}</span>
-                        <button onClick={()=> handleDelete(comment.id)}>Delete</button>
+                        {currentUser?.username === comment.authorName && 
+                        (<button onClick={()=> handleDelete(comment.id)}>Delete</button>)
+                        }
                     </li>
                 ))}
             </ul>
+            {currentUser ? (
             <form className="comment-form" onSubmit={handleSubmit}>
                 <input
                     value={content}
                     onChange={(event) => setContent(event.target.value)}
                     placeholder="Write a comment"
                 />
-                <button type="submit" disable={submitting}>
+                <button type="submit" disabled={submitting}>
                     Add
                 </button>
             </form>
+            ) : (
+                <p className="comment-empty">Log in to comment.</p>
+            )}
+
+
             {error && <p className="error">{error}</p>}
         </section>
     )
